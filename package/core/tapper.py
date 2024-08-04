@@ -37,7 +37,7 @@ def save_tap_balance(token, tap_balance, tap_token, proxies=None):
 
 def process_tap(token, proxies=None):
     while True:
-        tap_balance = random.randint(200, 300)
+        tap_balance = random.randint(1000, 2000)
         tap_token = start_tapping(token=token, proxies=proxies)
         if tap_token:
             tap_balance = save_tap_balance(
