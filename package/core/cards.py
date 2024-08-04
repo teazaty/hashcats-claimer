@@ -37,6 +37,7 @@ def get_highest_ratio_item(token, proxies=None):
     inventory_cards = cards(token=token, proxies=proxies)
     current_balance = balance(token=token, proxies=proxies)
     current_cards = my_cards(token=token, proxies=proxies)
+    friends_count = inventory_cards["equipment"][0]["newRefsCount"]
 
     # Function to update price and profit of bought cards
     def update_inventory_prices_and_profits(current_cards, inventory_cards):
@@ -48,15 +49,18 @@ def get_highest_ratio_item(token, proxies=None):
                 for item in category:
                     if item["id"] == card_id:
                         item["price"] = item["prices"][card_level]
-                        item["profit"] = item["profits"][card_level]
+                        item["profit"] = (
+                            item["profits"][card_level]
+                            - item["profits"][card_level - 1]
+                        )
 
     update_inventory_prices_and_profits(
         current_cards=current_cards, inventory_cards=inventory_cards
     )
 
     # Function to calculate price/profit ratio
-    def price_profit_ratio(item):
-        return float(item["price"]) / float(item["profit"])
+    def profit_price_ratio(item):
+        return float(item["profit"]) / float(item["price"])
 
     # Function to check if requirements are met
     def requirements_met(requirements, cards):
@@ -64,6 +68,12 @@ def get_highest_ratio_item(token, proxies=None):
             return True
         required_card_id = requirements.get("requiredCardId")
         required_card_level = requirements.get("requiredCardLevel")
+        required_friends_count = requirements.get("requiredFriendsCount")
+        if (
+            required_friends_count is not None
+            and required_friends_count > friends_count
+        ):
+            return False
         if required_card_id is None or required_card_level is None:
             return True
         for card in cards:
@@ -85,7 +95,7 @@ def get_highest_ratio_item(token, proxies=None):
             if item_price <= current_balance and requirements_met(
                 item["requirementsJson"], current_cards
             ):
-                ratio = price_profit_ratio(item)
+                ratio = profit_price_ratio(item)
                 if ratio > highest_ratio:
                     highest_ratio = ratio
                     highest_ratio_item = {
@@ -106,6 +116,12 @@ def process_buy_card(token, proxies=None):
         if highest_ratio_item:
             card_id = highest_ratio_item["id"]
             category = highest_ratio_item["category"]
+            card_name = highest_ratio_item["name"]
+            card_price = highest_ratio_item["price"]
+            card_profit = highest_ratio_item["profit"]
+            base.log(
+                f"{base.white}Auto Buy Card: {base.yellow}Highest profitable card {base.white}| {base.yellow}Category: {base.white}{category} - {base.yellow}Name: {base.white}{card_name} - {base.yellow}Price: {base.white}{int(card_price):,} - {base.yellow}Profit Increase: {base.white}{int(card_profit):,}"
+            )
             start_buy_card = buy_card(
                 token=token, card_id=card_id, category=category, proxies=proxies
             )
@@ -117,7 +133,8 @@ def process_buy_card(token, proxies=None):
                     f"{base.white}Auto Buy Card: {base.green}Sucess {base.white}| {base.green}New balance: {base.white}{current_balance} - {base.green}Buy Card: {base.white}{buy_card_name} - {base.green}Level: {base.white}{buy_card_level}"
                 )
             except:
-                base.log(f"{base.white}Auto Buy Card: {base.red}Fail")
+                error_message = start_buy_card["message"]
+                base.log(f"{base.white}Auto Buy Card: {base.red}{error_message}")
                 break
         else:
             base.log(
