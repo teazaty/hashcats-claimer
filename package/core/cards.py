@@ -69,9 +69,8 @@ def get_highest_ratio_item(token, proxies=None):
         required_card_id = requirements.get("requiredCardId")
         required_card_level = requirements.get("requiredCardLevel")
         required_friends_count = requirements.get("requiredFriendsCount")
-        if (
-            required_friends_count is not None
-            and required_friends_count > friends_count
+        if required_friends_count is not None and int(required_friends_count) > int(
+            friends_count
         ):
             return False
         if required_card_id is None or required_card_level is None:
