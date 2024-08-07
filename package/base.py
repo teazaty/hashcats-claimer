@@ -1,10 +1,12 @@
 import os
 import sys
-from colorama import Fore, Style
+from colorama import *
 import json
 from datetime import datetime
 import requests
 from requests.auth import HTTPProxyAuth
+
+init(autoreset=True)
 
 
 class Base:
