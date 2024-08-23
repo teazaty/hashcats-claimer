@@ -1,0 +1,27 @@
+name: Run Python Script Every 5 Minutes
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # Menjadwalkan setiap 5 menit
+  workflow_dispatch:  # Memungkinkan Anda untuk menjalankan workflow secara manual jika diperlukan
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11.0'  # Ganti dengan versi Python yang Anda butuhkan
+      
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt  # Pastikan Anda memiliki file requirements.txt jika ada
+        
+    - name: Run bot.py
+      run: |
+        python bot.py
