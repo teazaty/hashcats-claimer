@@ -49,10 +49,16 @@ def get_highest_ratio_item(token, proxies=None):
                 for item in category:
                     if item["id"] == card_id:
                         item["price"] = item["prices"][card_level]
-                        item["profit"] = (
-                            item["profits"][card_level]
-                            - item["profits"][card_level - 1]
-                        )
+                        try:
+                            item["profit"] = (
+                                item["profits"][card_level]
+                                - item["profits"][card_level - 1]
+                            )
+                        except:
+                            item["profit"] = (
+                                item["stackingProfits"][card_level]
+                                - item["stackingProfits"][card_level - 1]
+                            )
 
     update_inventory_prices_and_profits(
         current_cards=current_cards, inventory_cards=inventory_cards
