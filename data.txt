@@ -1,0 +1,1 @@
+query_id=AAFXchBMAAAAAFdyEEzgSCOO&user=%7B%22id%22%3A1276146263%2C%22first_name%22%3A%22WanBot%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22wanbotx%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1724409874&hash=c3dc3adb7ba2fae7a2f8898000be63cd0b5971e1ead6a131c676dca8d16c4537
